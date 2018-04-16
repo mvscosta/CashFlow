@@ -19,6 +19,12 @@
         <th>
             @Html.DisplayNameFor(model => model.Description)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Active)
+        </th>
         <th></th>
     </tr>
 
@@ -29,6 +35,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Active)
         </td>
         <td>
             @Html.ActionLink(" ", "Edit", new { id = item.PaymentTypeId }, new { @class = "btn btn-xs text-warning fa fa-pencil" + ViewBag.Disabled }) |

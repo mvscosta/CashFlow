@@ -18,7 +18,7 @@ namespace CashFlow.Handler
         }
         
         public abstract T Find(Guid? id, bool includeRelatedEntities = true);
-        public abstract IEnumerable<T> All();
+        public abstract IQueryable<T> All();
 
         public void Add(T entity)
         {

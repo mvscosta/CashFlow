@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace CashFlow.Base.Interfaces
 {
-    public interface ITransactionHandler: IHandler<Transaction>
+    public interface ITransactionHandler : IHandler<Transaction>
     {
+        IQueryable<Transaction> TransactionsByDate(DateTime startDate, DateTime endDate, int? limit = null);
     }
 }

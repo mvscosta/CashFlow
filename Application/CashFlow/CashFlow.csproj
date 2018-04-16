@@ -375,6 +375,10 @@
       <Project>{F5B0D848-1EDE-415B-9464-698CC755821C}</Project>
       <Name>CashFlow.Handler</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CashFlow.Roles\CashFlow.Role.csproj">
+      <Project>{096a53c1-3b94-44f8-8a4f-0e18b346e108}</Project>
+      <Name>CashFlow.Role</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

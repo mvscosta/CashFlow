@@ -12,7 +12,7 @@ namespace CashFlow.Base.Interfaces
         void Update(T _item);
         void Delete(Guid id);
         T Find(Guid? id, bool includeRelatedEntities = true);
-        IEnumerable<T> All();
+        IQueryable<T> All();
         void Save();
         void Dispose();
     }

@@ -53,7 +53,7 @@
                     <td>
                         @*@Html.ActionLink(" ", "Edit", new { id = item.Id }, new { @class = "btn btn-xs text-warning fa fa-pencil" + ViewBag.Disabled }) |*@
                         @*@Html.ActionLink(" ", "Details", new { id = item.Id }, new { @class = "btn btn-xs text-info fa fa-info" + ViewBag.Disabled }) |*@
-                        @Html.ActionLink(" ", "Delete", new { id = item.TransactionId }, new { @class = "btn btn-xs text-danger fa fa-trash" + ViewBag.Disabled })
+                        @Html.ActionLink(" ", "Delete", new { id = item.TransactionId }, new { @class = "btn btn-xs text-danger fa fa-trash" + ViewBag.AdmDisabled })
                     </td>
                 </tr>
             }

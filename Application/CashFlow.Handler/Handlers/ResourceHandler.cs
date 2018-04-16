@@ -26,9 +26,9 @@ namespace CashFlow.Handler
             return Context.Resource.Find(id);
         }
 
-        public override IEnumerable<Resource> All()
+        public override IQueryable<Resource> All()
         {
-            return Context.Resource.Include("Role").ToList();
+            return Context.Resource.Include("Role").AsQueryable();
         }
     }
 }

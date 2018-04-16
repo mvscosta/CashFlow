@@ -63,7 +63,7 @@ namespace CashFlow.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Description,PaymentTypeName")] PaymentType paymentType)
+        public ActionResult Create([Bind(Include = "Description,Name,Active")] PaymentType paymentType)
         {
             if (!ResourcePermission("Manager"))
             {
@@ -105,7 +105,7 @@ namespace CashFlow.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PaymentTypeId,Description,Name")] PaymentType paymentType)
+        public ActionResult Edit([Bind(Include = "PaymentTypeId,Description,Name,Active")] PaymentType paymentType)
         {
             if (!ResourcePermission("Manager"))
             {

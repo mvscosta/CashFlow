@@ -12,5 +12,7 @@ namespace CashFlow.Base.Models
         public string Description { get; set; }
         [Required]
         public string Name { get; set; }
+        [Required]
+        public bool Active { get; set; }
     }
 }
