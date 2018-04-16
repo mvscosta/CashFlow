@@ -1,0 +1,34 @@
+﻿@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("Sair", "Perfil", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle user-name-menu" data-toggle="dropdown" title="@User.Identity.Name">
+                    <span class="fa fa-user fa-user-inside"></span><span class="nome-usuario">
+                        <span class="fa fa-user"></span>
+                        @User.Identity.Name
+                    </span> <br />
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="dados-user text-bold text-uppercase">
+                        <a href="#" class="nome-usuario-inside">
+                            @User.Identity.Name<br />
+                            <span class="organizacao-nome-inside">@User.Identity.Name</span>
+                        </a>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        @Html.ActionLink("Sair", "SignOut", "Account", routeValues: null, htmlAttributes: new { @class="fa fa-sign-out"})
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Entrar", "SignIn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

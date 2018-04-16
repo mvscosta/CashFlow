@@ -1,0 +1,42 @@
+﻿@model IEnumerable<CashFlow.Base.Models.PaymentType>
+
+@{
+    ViewBag.Title = "Payment Type";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Payment Types</h3>
+<hr />
+<p>
+    @Html.ActionLink("Add", "Create")
+</p>
+<div class="table-responsive">
+<table class="table table-striped table-condensed table-hover">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.ActionLink(" ", "Edit", new { id = item.PaymentTypeId }, new { @class = "btn btn-xs text-warning fa fa-pencil" + ViewBag.Disabled }) |
+            @Html.ActionLink(" ", "Details", new { id = item.PaymentTypeId }, new { @class = "btn btn-xs text-info fa fa-info" + ViewBag.Disabled }) |
+            @Html.ActionLink(" ", "Delete", new { id = item.PaymentTypeId }, new { @class = "btn btn-xs text-danger fa fa-trash" + ViewBag.Disabled })
+        </td>
+    </tr>
+}
+
+</table>
+    </div>

@@ -1,0 +1,49 @@
+﻿@model Vote.DAO.Voto
+
+@{
+    ViewBag.Title = "Deletar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Deletar</h3>
+<hr/>
+<h4>Você tem certeza que deseja deletar?</h4>
+<div>
+    <h4>Voto</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DataVoto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DataVoto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Funcionario.Ativo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Funcionario.Ativo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Restaurante.Endereco)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Restaurante.Endereco)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Deletar" class="btn btn-danger" />
+            @Html.ActionLink("Voltar", "Index")
+        </div>
+    }
+</div>

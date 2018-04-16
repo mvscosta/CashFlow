@@ -1,0 +1,31 @@
+﻿@model CashFlow.Models.HomeViewModel
+
+@if (Model.LoggedUser)
+{
+    <div style="margin-top: 35px;">
+        <div class="col-md-3 col-sm-4 col-xs-12 col-lg-2">
+            <a class="small-box-link">
+                <div class="small-box bg-vote">
+                    <div class="inner">
+                        <p class="title">
+                            Transactions today
+                        </p>
+                        <h3>
+                            @Model.TransactionsToday
+                        </h3>
+                        <h6>
+                            @Html.ActionLink("Add Transaction", "AddTransaction")
+                        </h6>
+                    </div>
+                    <div class="icon icon-vote">
+                        <i class="fa fa-money"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <h4>You need to login to make changes.</h4>
+}
