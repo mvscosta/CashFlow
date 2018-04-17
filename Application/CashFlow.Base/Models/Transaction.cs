@@ -28,6 +28,7 @@ namespace CashFlow.Base.Models
         public System.Guid PaymentTypeId { get; set; }
         [Required]
         [ForeignKey("Resource")]
+        [DisplayName("Created By")]
         public System.Guid ResourceId { get; set; }
 
         public virtual Resource Resource { get; set; }

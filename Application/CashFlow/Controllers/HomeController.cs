@@ -31,18 +31,22 @@ namespace CashFlow.Controllers
         {
             ViewBag.Title = "Cash Flow, welcome!";
 
-            var datetimeToday = DateTime.Today;
-            var startDateMonth = new DateTime(datetimeToday.Year, datetimeToday.Month, 1);
-            
-            return View(
-                new HomeViewModel()
-                {
-                    TransactionsToday = 0,
-                    ReceivedLast30Days = _transactionRole.TransactionsByDay(startDateMonth, datetimeToday).ToString("C2"),
-                    ReceivedToday = _transactionRole.TransactionsByDay(datetimeToday, datetimeToday).ToString("C2"),
-                    LoggedUser = base.CurrentUser?.Role?.Active ?? false
-                }
-            );
+            var viewModel = new HomeViewModel()
+            {
+                LoggedUser = !string.IsNullOrEmpty(base.CurrentUser.Username),
+                AuthorizedUser = base.CurrentUser.Role?.Active ?? false
+            };
+
+            if (viewModel.AuthorizedUser)
+            {
+                var datetimeToday = DateTime.Today;
+
+                viewModel.TransactionsToday = _transactionRole.TransactionsCountByDay(datetimeToday);
+                viewModel.ReceivedLast30Days = _transactionRole.TransactionsAmountLast30Days(datetimeToday)?.ToString("C2");
+                viewModel.ReceivedToday = _transactionRole.TransactionsAmountByDay(datetimeToday)?.ToString("C2");
+            }
+
+            return View(viewModel);
         }
 
         public ActionResult AddTransaction()

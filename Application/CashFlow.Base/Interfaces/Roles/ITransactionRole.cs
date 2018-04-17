@@ -4,6 +4,11 @@ namespace CashFlow.Role
 {
     public interface ITransactionRole
     {
-        int TransactionsByDay(DateTime startDate, DateTime endDate, int? limit = null);
+        decimal? TransactionsAmountByDay(DateTime date);
+
+        decimal? TransactionsAmountLast30Days(DateTime date);
+
+        int TransactionsCountByDay(DateTime date);
+
     }
 }

@@ -35,6 +35,6 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.PaymentTypeId }) |
-    @Html.ActionLink("Back", "Index")
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PaymentTypeId }, new { @class = "btn btn-primary" }) |
+    @Html.ActionLink("Back", "Index", null, new { @class = "btn btn-default" })
 </p>

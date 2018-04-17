@@ -2,74 +2,84 @@
 
 @if (Model.LoggedUser)
 {
-    <div style="margin-top: 35px;">
-        <div class="col-md-3 col-sm-4 col-xs-12 col-lg-2">
-            <a class="small-box-link">
-                <div class="small-box bg-vote">
-                    <div class="inner">
-                        <p class="title">
-                            Transactions today
-                        </p>
-                        <h3>
-                            @Model.TransactionsToday
-                        </h3>
-                        <h6>
-                            @Html.ActionLink("Add Transaction", "AddTransaction")
-                        </h6>
-                    </div>
-                    <div class="icon icon-vote">
-                        <i class="fa fa-money"></i>
-                    </div>
-                </div>
-            </a>
+    if (Model.AuthorizedUser)
+    {
+        <div style="margin-top: 35px;">
+            <h5>Welcome to Cash Flow system!</h5>
         </div>
-    </div>
-    <div style="margin-top: 35px;">
-        <div class="col-md-3 col-sm-4 col-xs-12 col-lg-2">
-            <a class="small-box-link">
-                <div class="small-box bg-vote">
-                    <div class="inner">
-                        <p class="title">
-                            Received Today
-                        </p>
-                        <h3>
-                            @Model.ReceivedToday
-                        </h3>
-                        <h6>
-                            @Html.ActionLink("Add Transaction", "create", "Transaction")
-                        </h6>
+        <div style="margin-top: 35px;">
+            <div class="col-md-3 col-sm-4 col-xs-12 col-lg-2">
+                <a class="small-box-link">
+                    <div class="small-box bg-vote">
+                        <div class="inner">
+                            <p class="title">
+                                Transactions today
+                            </p>
+                            <h3>
+                                @Model.TransactionsToday
+                            </h3>
+                            <h6>
+                                @Html.ActionLink("Add Transaction", "AddTransaction")
+                            </h6>
+                        </div>
+                        <div class="icon icon-vote">
+                            <i class="fa fa-money"></i>
+                        </div>
                     </div>
-                    <div class="icon icon-vote">
-                        <i class="fa fa-money"></i>
-                    </div>
-                </div>
-            </a>
+                </a>
+            </div>
         </div>
-    </div>
-    <div style="margin-top: 35px;">
-        <div class="col-md-3 col-sm-4 col-xs-12 col-lg-2">
-            <a class="small-box-link">
-                <div class="small-box bg-vote">
-                    <div class="inner">
-                        <p class="title">
-                            Received Last 30 Days
-                        </p>
-                        <h3>
-                            @Model.ReceivedLast30Days
-                        </h3>
-                        <h6>
-                            @Html.ActionLink("Add Transaction", "create", "Transaction")
-                        </h6>
+        <div style="margin-top: 35px;">
+            <div class="col-md-3 col-sm-4 col-xs-12 col-lg-2">
+                <a class="small-box-link">
+                    <div class="small-box bg-vote">
+                        <div class="inner">
+                            <p class="title">
+                                Received Today
+                            </p>
+                            <h3>
+                                @Model.ReceivedToday
+                            </h3>
+                            <h6>
+                                @Html.ActionLink("Add Transaction", "create", "Transaction")
+                            </h6>
+                        </div>
+                        <div class="icon icon-vote">
+                            <i class="fa fa-money"></i>
+                        </div>
                     </div>
-                    <div class="icon icon-vote">
-                        <i class="fa fa-money"></i>
-                    </div>
-                </div>
-            </a>
+                </a>
+            </div>
         </div>
-    </div>
+        <div style="margin-top: 35px;">
+            <div class="col-md-3 col-sm-4 col-xs-12 col-lg-2">
+                <a class="small-box-link">
+                    <div class="small-box bg-vote">
+                        <div class="inner">
+                            <p class="title">
+                                Received Last 30 Days
+                            </p>
+                            <h3>
+                                @Model.ReceivedLast30Days
+                            </h3>
+                            <h6>
+                                @Html.ActionLink("Add Transaction", "create", "Transaction")
+                            </h6>
+                        </div>
+                        <div class="icon icon-vote">
+                            <i class="fa fa-money"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h5>You haven't associated to an role in the portal, ask for your Manager.</h5>
+    }
 }
 else
 {
-    <h3>You need to login. </h3>@Html.ActionLink("Click here!", "SignIn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+    <h4>Please, sign in @Html.ActionLink("here", "SignIn", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" }) to see system features. </h4>
 }

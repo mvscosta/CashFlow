@@ -1,6 +1,7 @@
 ﻿using CashFlow.Base.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,6 +20,7 @@ namespace CashFlow.Base.Models
         [Required]
         public string Email { get; set; }
         [ForeignKey("Role")]
+        [DisplayName("Role")]
         public Guid? RoleId { get; set; }
 
         public virtual Role Role { get; set; }

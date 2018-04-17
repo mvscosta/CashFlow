@@ -25,8 +25,9 @@ namespace CashFlow.Controllers
 
         internal override void LoadViewBag()
         {
-            ViewBag.Disabled = ResourcePermission("Employee") ? "" : " disabled";
-            ViewBag.AdmDisabled = ResourcePermission("Manager") ? "" : " disabled";
+            var isManager = ResourcePermission("Manager");
+            ViewBag.Disabled = ResourcePermission("Employee") || isManager ? "" : " disabled";
+            ViewBag.AdmDisabled =  isManager ? "" : " disabled";
             ViewBag.PaymentTypes = new SelectList(
                 _paymentTypeRole.PaymentTypes().Select(p => new { p.PaymentTypeId, p.Name })
                 , "PaymentTypeId", "Name"
