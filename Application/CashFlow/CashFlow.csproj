@@ -349,6 +349,7 @@
     <Content Include="Views\PaymentType\Details.cshtml" />
     <Content Include="Views\PaymentType\Edit.cshtml" />
     <Content Include="Views\PaymentType\Index.cshtml" />
+    <Content Include="Views\Transaction\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -374,6 +375,10 @@
     <ProjectReference Include="..\CashFlow.Handler\CashFlow.Handler.csproj">
       <Project>{F5B0D848-1EDE-415B-9464-698CC755821C}</Project>
       <Name>CashFlow.Handler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CashFlow.Roles\CashFlow.Role.csproj">
+      <Project>{096a53c1-3b94-44f8-8a4f-0e18b346e108}</Project>
+      <Name>CashFlow.Role</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

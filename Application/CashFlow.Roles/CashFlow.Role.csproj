@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8827DB96-D718-4BBD-8087-C41E7992ADE1}</ProjectGuid>
+    <ProjectGuid>{096A53C1-3B94-44F8-8A4F-0E18B346E108}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CashFlow.Base</RootNamespace>
-    <AssemblyName>CashFlow.Base</AssemblyName>
+    <RootNamespace>CashFlow.Role</RootNamespace>
+    <AssemblyName>CashFlow.Role</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -42,19 +47,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\Handlers\IHandler.cs" />
-    <Compile Include="Interfaces\Handlers\IRoleHandler.cs" />
-    <Compile Include="Interfaces\Handlers\IPaymentTypeHandler.cs" />
-    <Compile Include="Interfaces\Handlers\IResourceHandler.cs" />
-    <Compile Include="Interfaces\Handlers\ITransactionHandler.cs" />
-    <Compile Include="Interfaces\Roles\IPaymentTypeRole.cs" />
-    <Compile Include="Interfaces\Roles\IRoleRole.cs" />
-    <Compile Include="Interfaces\Roles\ITransactionRole.cs" />
-    <Compile Include="Models\PaymentType.cs" />
-    <Compile Include="Models\Resource.cs" />
-    <Compile Include="Models\Role.cs" />
-    <Compile Include="Models\Transaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Roles\RoleRole.cs" />
+    <Compile Include="Roles\PaymentTypeRole.cs" />
+    <Compile Include="Roles\TransactionRole.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CashFlow.Base\CashFlow.Base.csproj">
+      <Project>{8827DB96-D718-4BBD-8087-C41E7992ADE1}</Project>
+      <Name>CashFlow.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CashFlow.Handler\CashFlow.Handler.csproj">
+      <Project>{f5b0d848-1ede-415b-9464-698cc755821c}</Project>
+      <Name>CashFlow.Handler</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

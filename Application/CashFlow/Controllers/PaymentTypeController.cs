@@ -22,7 +22,7 @@ namespace CashFlow.Controllers
 
         internal override void LoadViewBag()
         {
-            //ViewBag.Disabled = UsuarioAdministrador() ? "" : " disabled";
+            ViewBag.AdmDisabled = ResourcePermission("Manager") ? "" : " disabled";
         }
 
         // GET: PaymentType
@@ -63,7 +63,7 @@ namespace CashFlow.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Description,PaymentTypeName")] PaymentType paymentType)
+        public ActionResult Create([Bind(Include = "Description,Name,Active")] PaymentType paymentType)
         {
             if (!ResourcePermission("Manager"))
             {
@@ -105,7 +105,7 @@ namespace CashFlow.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PaymentTypeId,Description,Name")] PaymentType paymentType)
+        public ActionResult Edit([Bind(Include = "PaymentTypeId,Description,Name,Active")] PaymentType paymentType)
         {
             if (!ResourcePermission("Manager"))
             {
@@ -124,20 +124,25 @@ namespace CashFlow.Controllers
         // GET: PaymentType/Delete/5
         public ActionResult Delete(Guid? id)
         {
-            if (id == null)
+            if (!id.HasValue)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (!id.HasValue)
-            {
-                return HttpNotFound();
-            }
+
             if (!ResourcePermission("Manager"))
             {
                 ModelState.AddModelError("", "You don`t have permission.");
                 return RedirectToAction("Index");
             }
-            return RedirectToAction("Index");
+
+            PaymentType paymentType = Handler.Find(id.Value);
+
+            if (paymentType == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(paymentType);
         }
 
         // POST: PaymentType/Delete/5

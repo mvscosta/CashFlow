@@ -50,18 +50,23 @@ namespace CashFlow.Controllers
 
                 if (HttpContext.User.Identity is ClaimsIdentity)
                 {
-                    usernameAuthentication = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == "emails").Select(c => c.Value).First();
-                    resource = _resourceHandler.All().FirstOrDefault(u => u.Active && u.Email.Equals(usernameAuthentication, StringComparison.InvariantCultureIgnoreCase));
+                    usernameAuthentication = (HttpContext.User.Identity as ClaimsIdentity).Claims.Where(c => c.Type == "emails").Select(c => c.Value).FirstOrDefault();
+                    if (usernameAuthentication != null)
+                    {
+                        resource = _resourceHandler.All().FirstOrDefault(u => u.Active && u.Email.Equals(usernameAuthentication, StringComparison.InvariantCultureIgnoreCase));
+                    }
                 }
                 else
                 {
                     usernameAuthentication = HttpContext.User.Identity.Name;
-                    resource = _resourceHandler.All().FirstOrDefault(u => u.Active && u.Email.Equals(usernameAuthentication, StringComparison.InvariantCultureIgnoreCase));
+                    resource = _resourceHandler.All().FirstOrDefault(u => u.Active && u.Username.Equals(usernameAuthentication, StringComparison.InvariantCultureIgnoreCase));
                 }
                 if (resource == null)
                 {
-                    resource = default(Resource);
-                    resource.Username = usernameAuthentication;
+                    resource = new Resource()
+                    {
+                        Username = usernameAuthentication
+                    };
                 }
                 return (resource);
             }
@@ -70,7 +75,7 @@ namespace CashFlow.Controllers
         public bool ResourcePermission(string roleName)
         {
 
-            if (CurrentUser == null || CurrentUser.Role != null)
+            if (CurrentUser == null || CurrentUser.Role == null)
                 return false;
 
             return CurrentUser.Role.Name.Equals(roleName);

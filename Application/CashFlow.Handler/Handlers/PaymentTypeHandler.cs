@@ -21,9 +21,9 @@ namespace CashFlow.Handler
             return Context.PaymentType.Find(id);
         }
 
-        public override IEnumerable<PaymentType> All()
+        public override IQueryable<PaymentType> All()
         {
-            return Context.PaymentType.ToList();
+            return Context.PaymentType.AsQueryable();
         }
     }
 }

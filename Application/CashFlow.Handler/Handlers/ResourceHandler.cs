@@ -20,15 +20,18 @@ namespace CashFlow.Handler
         {
             if (includeRelatedEntities)
             {
-                return Context.Resource.Include("Role").Where(r=>r.ResourceId.Equals(id)).FirstOrDefault();
+                return Context.Resource
+                    .Include("Role")
+                    .Where(r=>r.ResourceId.Equals(id.Value))
+                    .FirstOrDefault();
             }
 
             return Context.Resource.Find(id);
         }
 
-        public override IEnumerable<Resource> All()
+        public override IQueryable<Resource> All()
         {
-            return Context.Resource.Include("Role").ToList();
+            return Context.Resource.Include("Role").AsQueryable();
         }
     }
 }

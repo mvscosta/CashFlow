@@ -9,6 +9,7 @@ namespace CashFlow.Base.Models
     public partial class Resource
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public System.Guid ResourceId { get; set; }
         public bool Active { get; set; }
         [Required]

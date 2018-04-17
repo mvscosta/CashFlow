@@ -1,5 +1,6 @@
 ﻿using CashFlow.Base.Interfaces;
 using CashFlow.Base.Models;
+using CashFlow.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,172 +12,143 @@ using System.Web.Mvc;
 
 namespace CashFlow.Controllers
 {
+    [Authorize]
     public class TransactionController : BaseController<Transaction>
     {
-        public TransactionController(IResourceHandler resourceHandler, ITransactionHandler handler)
+        private IPaymentTypeRole _paymentTypeRole { get; set; }
+
+        public TransactionController(IResourceHandler resourceHandler, IPaymentTypeRole paymentTypeRole, ITransactionHandler handler)
             : base(resourceHandler, handler)
         {
-
+            this._paymentTypeRole = paymentTypeRole;
         }
 
         internal override void LoadViewBag()
         {
-            //ViewBag.Disabled = UsuarioAdministrador() ? "" : " disabled";
-            //ViewBag.IdCategoria = new SelectList(db.Categorias, "Id", "Titulo");
-            //ViewBag.IdModalidade = new SelectList(db.Modalidades, "Id", "Titulo");
-
+            ViewBag.Disabled = ResourcePermission("Employee") ? "" : " disabled";
+            ViewBag.AdmDisabled = ResourcePermission("Manager") ? "" : " disabled";
+            ViewBag.PaymentTypes = new SelectList(
+                _paymentTypeRole.PaymentTypes().Select(p => new { p.PaymentTypeId, p.Name })
+                , "PaymentTypeId", "Name"
+            );
         }
 
-        // GET: Restaurantes
+        // GET: Transaction
         public ActionResult Index()
         {
-            throw new NotImplementedException();
+            LoadViewBag();
 
-            //LoadViewBag();
-            //var restaurantes = db.Restaurantes.Include(r => r.Categoria).Include(r => r.Modalidade);
-            //return View(restaurantes.OrderBy(r => r.Nome).ToList());
+            var transactions = Handler
+                .All()
+                .Include("PaymentType")
+                .Include("Resource")
+                .OrderByDescending(r => r.TransactionDate)
+                .AsEnumerable()
+                .Select(t => new TransactionViewModel()
+                {
+                    Amount = (t.Amount.HasValue ? t.Amount.Value : 0).ToString("C2"),
+                    Description = t.Description,
+                    TransactionDateTime = t.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
+                    PaymentTypeName = t.PaymentType.Name,
+                    ResourceName = t.Resource.Name
+                }
+            );
+
+            return View(transactions.ToList());
         }
 
-        // GET: Restaurantes/Details/5
-        public ActionResult Details(int? id)
-        {
-            throw new NotImplementedException();
-
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-            //Restaurante restaurante = db.Restaurantes.Find(id);
-            //if (restaurante == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            //return View(restaurante);
-        }
-
-        // GET: Restaurantes/Create
+        // GET: Transaction/Create
         public ActionResult Create()
         {
+            if (!ResourcePermission("Employee")
+                && !ResourcePermission("Manager"))
+            {
+                ModelState.AddModelError("", "You don`t have permission.");
+                return RedirectToAction("Index");
+            }
+
             LoadViewBag();
-            //if (!ResourcePermission("Manager"))
-            //{
-            //    ModelState.AddModelError("", "You don`t have permission.");
-            //    return View();
-            //}
+            
             return View();
         }
 
-        // POST: Restaurantes/Create
+        // POST: Transaction/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,IdCategoria,IdModalidade,DistanciaMedia,Endereco,Nome,ValorMedio,Ativo")] IDbTransaction transaction)
+        public ActionResult Create([Bind(Include = "PaymentTypeId,Amount,Description")] Transaction transaction)
         {
-            throw new NotImplementedException();
+            if (!ResourcePermission("Employee")
+                && (!ResourcePermission("Manager")))
+            {
+                ModelState.AddModelError("", "You don`t have permission.");
+                return RedirectToAction("Index");
+            }
 
-            //LoadViewBag();
-            //if (!UsuarioAdministrador())
-            //{
-            //    ModelState.AddModelError("", "You don`t have permission.");
-            //    return View(restaurante);
-            //}
-            //if (ModelState.IsValid)
-            //{
-            //    db.Restaurantes.Add(restaurante);
-            //    db.SaveChanges();
-            //    return RedirectToAction("Index");
-            //}
+            if (ModelState.IsValid)
+            {
+                transaction.ResourceId = CurrentUser.ResourceId;
+                transaction.TransactionDate = DateTime.Now;
 
-            //return View(restaurante);
+                Handler.Add(transaction);
+                Handler.Save();
+                return RedirectToAction("Index");
+            }
+
+            LoadViewBag();
+
+            return View(transaction);
+        }
+        
+        // GET: Transaction/Delete/5
+        public ActionResult Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (!ResourcePermission("Manager"))
+            {
+                ModelState.AddModelError("", "You don`t have permission.");
+                return RedirectToAction("Index");
+            }
+
+            Transaction transaction = Handler.Find(id);
+
+            if (transaction == null)
+            {
+                return HttpNotFound();
+            }
+
+            var viewModel = new TransactionViewModel()
+            {
+                Amount = (transaction.Amount.HasValue ? transaction.Amount.Value : 0).ToString("C2"),
+                Description = transaction.Description,
+                TransactionDateTime = transaction.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
+                PaymentTypeName = transaction.PaymentType.Name,
+                ResourceName = transaction.Resource.Name
+            };
+
+            return View(viewModel);
         }
 
-        // GET: Restaurantes/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            throw new NotImplementedException();
-
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-            //Restaurante restaurante = db.Restaurantes.Find(id);
-            //if (restaurante == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            //LoadViewBag();
-            //if (!UsuarioAdministrador())
-            //{
-            //    ModelState.AddModelError("", "You don`t have permission.");
-            //    return View(restaurante);
-            //}
-            //return View(restaurante);
-        }
-
-        // POST: Restaurantes/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,IdCategoria,IdModalidade,DistanciaMedia,Endereco,Nome,ValorMedio,Ativo")] IDbTransaction transaction)
-        {
-            throw new NotImplementedException();
-
-            //LoadViewBag();
-            //if (!UsuarioAdministrador())
-            //{
-            //    ModelState.AddModelError("", "You don`t have permission.");
-            //    return View(restaurante);
-            //}
-            //if (ModelState.IsValid)
-            //{
-            //    db.Entry(restaurante).State = EntityState.Modified;
-            //    db.SaveChanges();
-            //    return RedirectToAction("Index");
-            //}
-            //return View(restaurante);
-        }
-
-        // GET: Restaurantes/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            throw new NotImplementedException();
-
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-            //Restaurante restaurante = db.Restaurantes.Find(id);
-            //if (restaurante == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            //if (!ResourcePermission("Manager"))
-            //{
-            //    ModelState.AddModelError("", "You don`t have permission.");
-            //    return View(restaurante);
-            //}
-            //return View(restaurante);
-        }
-
-        // POST: Restaurantes/Delete/5
+        // POST: Transaction/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(Guid id)
         {
-            throw new NotImplementedException();
+            if (!ResourcePermission("Manager"))
+            {
+                ModelState.AddModelError("", "You don`t have permission.");
+                return RedirectToAction("Index");
+            }
 
-            //Restaurante restaurante = db.Restaurantes.Find(id);
-            //if (!ResourcePermission("Manager"))
-            //{
-            //    ModelState.AddModelError("", "You don`t have permission.");
-            //    return View(restaurante);
-            //}
-            //restaurante.Ativo = false;
-            //db.Entry(restaurante).State = EntityState.Modified;
-            //db.SaveChanges();
-            //return RedirectToAction("Index");
+            Handler.Delete(id);
+            Handler.Save();
+
+            return RedirectToAction("Index");
         }
     }
 }

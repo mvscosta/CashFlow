@@ -17,7 +17,7 @@ namespace CashFlow.Handler
         public virtual DbSet<Transaction> Transaction { get; set; }
         public virtual DbSet<PaymentType> PaymentType { get; set; }
         public virtual DbSet<Resource> Resource { get; set; }
-        public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<Base.Models.Role> Role { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -27,7 +27,7 @@ namespace CashFlow.Handler
             //modelBuilder.Conventions.Remove(conventions);
 
             modelBuilder.Entity<Resource>()
-                .HasOptional<Role>(r => r.Role);
+                .HasOptional<Base.Models.Role>(r => r.Role);
         }
     }
 }
