@@ -8,7 +8,7 @@
 <h3>Transactions</h3>
 <hr/>
 <p>
-    @Html.ActionLink("Add", "Create")
+    @Html.ActionLink("Add", "Create", null, new { @class = ViewBag.disabled })
 </p>
 <div class="table-responsive">
     <table class="table table-striped table-condensed table-hover">
@@ -51,8 +51,7 @@
                         @Html.DisplayFor(modelItem => item.ResourceName)
                     </td>
                     <td>
-                        @*@Html.ActionLink(" ", "Edit", new { id = item.Id }, new { @class = "btn btn-xs text-warning fa fa-pencil" + ViewBag.Disabled }) |*@
-                        @*@Html.ActionLink(" ", "Details", new { id = item.Id }, new { @class = "btn btn-xs text-info fa fa-info" + ViewBag.Disabled }) |*@
+                        @Html.ActionLink(" ", "Edit", new { id = item.TransactionId }, new { @class = "btn btn-xs text-warning fa fa-pencil" + ViewBag.AdmDisabled }) |
                         @Html.ActionLink(" ", "Delete", new { id = item.TransactionId }, new { @class = "btn btn-xs text-danger fa fa-trash" + ViewBag.AdmDisabled })
                     </td>
                 </tr>

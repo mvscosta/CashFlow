@@ -50,7 +50,8 @@ namespace CashFlow.Controllers
                     Description = t.Description,
                     TransactionDateTime = t.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
                     PaymentTypeName = t.PaymentType.Name,
-                    ResourceName = t.Resource.Name
+                    ResourceName = t.Resource.Name,
+                    TransactionId = t.TransactionId
                 }
             );
 
@@ -100,7 +101,58 @@ namespace CashFlow.Controllers
 
             return View(transaction);
         }
-        
+
+        // GET: Transaction/Edit
+        public ActionResult Edit(Guid? id)
+        {
+            if (!ResourcePermission("Manager"))
+            {
+                ModelState.AddModelError("", "You don`t have permission.");
+                return RedirectToAction("Index");
+            }
+
+            Transaction transaction = Handler.Find(id);
+
+            if (transaction == null)
+            {
+                return HttpNotFound();
+            }
+
+            LoadViewBag();
+
+            return View(transaction);
+        }
+
+        // POST: Transaction/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "TransactionId,PaymentTypeId,Amount,Description")] Transaction transaction)
+        {
+            if ((!ResourcePermission("Manager")))
+            {
+                ModelState.AddModelError("", "You don`t have permission.");
+                return RedirectToAction("Index");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var orig = Handler.Find(transaction.TransactionId);
+                orig.Amount = transaction.Amount;
+                orig.Description = transaction.Description;
+                orig.PaymentTypeId = transaction.PaymentTypeId;
+
+                Handler.Update(orig);
+                Handler.Save();
+                return RedirectToAction("Index");
+            }
+
+            LoadViewBag();
+
+            return View(transaction);
+        }
+
         // GET: Transaction/Delete/5
         public ActionResult Delete(Guid? id)
         {

@@ -350,6 +350,7 @@
     <Content Include="Views\PaymentType\Edit.cshtml" />
     <Content Include="Views\PaymentType\Index.cshtml" />
     <Content Include="Views\Transaction\Delete.cshtml" />
+    <Content Include="Views\Transaction\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

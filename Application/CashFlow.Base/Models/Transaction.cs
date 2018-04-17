@@ -24,7 +24,7 @@ namespace CashFlow.Base.Models
         public DateTime TransactionDate { get; set; }
         [ForeignKey("PaymentType")]
         [DisplayName("Payment Type")]
-        [Required(ErrorMessage = "Must Choose a Country")]
+        [Required(ErrorMessage = "Must Choose a Payment Type")]
         public System.Guid PaymentTypeId { get; set; }
         [Required]
         [ForeignKey("Resource")]

@@ -22,7 +22,7 @@ namespace CashFlow.Handler
                 return Context.Transaction
                     .Include("Resource")
                     .Include("PaymentType")
-                    .Where(pt => pt.PaymentTypeId.Equals(id.Value))
+                    .Where(pt => pt.TransactionId.Equals(id.Value))
                     .FirstOrDefault();
             }
 
