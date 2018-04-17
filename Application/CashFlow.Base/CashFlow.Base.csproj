@@ -43,10 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\Handlers\IHandler.cs" />
+    <Compile Include="Interfaces\Handlers\IRoleHandler.cs" />
     <Compile Include="Interfaces\Handlers\IPaymentTypeHandler.cs" />
     <Compile Include="Interfaces\Handlers\IResourceHandler.cs" />
     <Compile Include="Interfaces\Handlers\ITransactionHandler.cs" />
     <Compile Include="Interfaces\Roles\IPaymentTypeRole.cs" />
+    <Compile Include="Interfaces\Roles\IRoleRole.cs" />
     <Compile Include="Interfaces\Roles\ITransactionRole.cs" />
     <Compile Include="Models\PaymentType.cs" />
     <Compile Include="Models\Resource.cs" />

@@ -18,9 +18,9 @@ namespace CashFlow.Role
             this._handler = handler;
         }
 
-        public int TransactionsByDay(DateTime date)
+        public int TransactionsByDay(DateTime startDate, DateTime endDate, int? limit = null)
         {
-            return _handler.TransactionsByDate(date, date).Count();
+            return _handler.TransactionsByDate(startDate, endDate, limit).Count();
         }
     }
 }

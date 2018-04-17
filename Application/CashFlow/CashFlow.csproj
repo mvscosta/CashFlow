@@ -349,6 +349,7 @@
     <Content Include="Views\PaymentType\Details.cshtml" />
     <Content Include="Views\PaymentType\Edit.cshtml" />
     <Content Include="Views\PaymentType\Index.cshtml" />
+    <Content Include="Views\Transaction\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

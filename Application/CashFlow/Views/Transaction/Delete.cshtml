@@ -1,49 +1,56 @@
-﻿@model Vote.DAO.Voto
+﻿@model CashFlow.Models.TransactionViewModel
 
 @{
-    ViewBag.Title = "Deletar";
+    ViewBag.Title = "Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h3>Deletar</h3>
+<h3>Delete</h3>
 <hr/>
-<h4>Você tem certeza que deseja deletar?</h4>
+<h4>Are you sure want to delete this record?</h4>
 <div>
-    <h4>Voto</h4>
+    <h4>Transaction</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.DataVoto)
+            @Html.DisplayNameFor(model => model.Description)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.DataVoto)
+            @Html.DisplayFor(model => model.Description)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Funcionario.Ativo)
+            @Html.DisplayNameFor(model => model.Amount)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Funcionario.Ativo)
+            @Html.DisplayFor(model => model.Amount)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Restaurante.Endereco)
+            @Html.DisplayNameFor(model => model.TransactionDateTime)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Restaurante.Endereco)
+            @Html.DisplayFor(model => model.TransactionDateTime)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.ResourceName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ResourceName)
+        </dd>
     </dl>
 
     @using (Html.BeginForm()) {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <input type="submit" value="Deletar" class="btn btn-danger" />
-            @Html.ActionLink("Voltar", "Index")
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            @Html.ActionLink("Back", "Index")
         </div>
     }
 </div>

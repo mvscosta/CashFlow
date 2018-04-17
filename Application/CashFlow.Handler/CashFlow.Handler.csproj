@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="CashFlowContext.cs" />
     <Compile Include="Handlers\BaseHandler.cs" />
+    <Compile Include="Handlers\RoleHandler.cs" />
     <Compile Include="Handlers\ResourceHandler.cs" />
     <Compile Include="Handlers\PaymentTypeHandler.cs" />
     <Compile Include="Handlers\TransactionHandler.cs" />

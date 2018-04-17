@@ -7,15 +7,20 @@ using System.Web.Mvc;
 using CashFlow.Models;
 using CashFlow.Base.Interfaces;
 using CashFlow.Base.Models;
+using CashFlow.Role;
 
 namespace CashFlow.Controllers
 {
     public class HomeController : BaseController<Transaction>
     {
-        public HomeController(IResourceHandler resourceHandler, ITransactionHandler handler)
+        private IResourceHandler _resourceHandler { get; set; }
+        private ITransactionRole _transactionRole { get; set; }
+
+        public HomeController(IResourceHandler resourceHandler, ITransactionHandler handler, ITransactionRole transactionRole)
             : base(resourceHandler, handler)
         {
-
+            this._resourceHandler = resourceHandler;
+            this._transactionRole = transactionRole;
         }
 
         internal override void LoadViewBag()
@@ -26,11 +31,16 @@ namespace CashFlow.Controllers
         {
             ViewBag.Title = "Cash Flow, welcome!";
 
+            var datetimeToday = DateTime.Today;
+            var startDateMonth = new DateTime(datetimeToday.Year, datetimeToday.Month, 1);
+            
             return View(
                 new HomeViewModel()
                 {
                     TransactionsToday = 0,
-                    LoggedUser = base.CurrentUser != null
+                    ReceivedLast30Days = _transactionRole.TransactionsByDay(startDateMonth, datetimeToday).ToString("C2"),
+                    ReceivedToday = _transactionRole.TransactionsByDay(datetimeToday, datetimeToday).ToString("C2"),
+                    LoggedUser = base.CurrentUser?.Role?.Active ?? false
                 }
             );
         }

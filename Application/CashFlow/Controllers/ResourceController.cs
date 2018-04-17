@@ -14,15 +14,21 @@ namespace CashFlow.Controllers
     [Authorize]
     public class ResourceController : BaseController<Resource>
     {
-        public ResourceController(IResourceHandler resourceHandler, IResourceHandler handler)
+        public IRoleRole _roleRole { get; set; }
+
+        public ResourceController(IResourceHandler resourceHandler, IResourceHandler handler, IRoleRole roleRole)
             : base(resourceHandler, handler)
         {
-
+            this._roleRole = roleRole;
         }
 
         internal override void LoadViewBag()
         {
-            ViewBag.Disabled = ResourcePermission("Manager") ? "" : " disabled";
+            ViewBag.AdmDisabled = ResourcePermission("Manager") ? "" : " disabled";
+            ViewBag.Roles = new SelectList(
+                _roleRole.Roles().Select(r => new { r.RoleId, r.Name })
+                , "RoleId", "Name"
+            );
         }
 
         // GET: 
@@ -39,11 +45,14 @@ namespace CashFlow.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Resource funcionario = Handler.Find(id);
+
             if (funcionario == null)
             {
                 return HttpNotFound();
             }
+
             return View(funcionario);
         }
 
@@ -55,6 +64,9 @@ namespace CashFlow.Controllers
                 ModelState.AddModelError("", "You don`t have permission.");
                 return View();
             }
+
+            LoadViewBag();
+
             return View();
         }
 
@@ -70,6 +82,7 @@ namespace CashFlow.Controllers
                 ModelState.AddModelError("", "You don`t have permission.");
                 return View(resource);
             }
+
             if (ModelState.IsValid)
             {
                 Handler.Add(resource);
@@ -87,16 +100,21 @@ namespace CashFlow.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Resource resource = Handler.Find(id);
             if (resource == null)
             {
                 return HttpNotFound();
             }
+
             if (!ResourcePermission("Manager"))
             {
                 ModelState.AddModelError("", "You don`t have permission.");
                 return View(resource);
             }
+
+            LoadViewBag();
+
             return View(resource);
         }
 
@@ -112,12 +130,14 @@ namespace CashFlow.Controllers
                 ModelState.AddModelError("", "You don`t have permission.");
                 return View(resource);
             }
+
             if (ModelState.IsValid)
             {
                 Handler.Update(resource);
                 Handler.Save();
                 return RedirectToAction("Index");
             }
+
             return View(resource);
         }
 
@@ -128,16 +148,20 @@ namespace CashFlow.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Resource resource = Handler.Find(id);
+
             if (resource == null)
             {
                 return HttpNotFound();
             }
+
             if (!ResourcePermission("Manager"))
             {
                 ModelState.AddModelError("", "You don`t have permission.");
                 return View(resource);
             }
+
             return View(resource);
         }
 
@@ -147,14 +171,17 @@ namespace CashFlow.Controllers
         public ActionResult DeleteConfirmed(Guid id)
         {
             Resource resource = Handler.Find(id);
+
             if (!ResourcePermission("Manager"))
             {
                 ModelState.AddModelError("", "You don`t have permission.");
                 return View(resource);
             }
+
             resource.Active = false;
             Handler.Update(resource);
             Handler.Save();
+
             return RedirectToAction("Index");
         }
     }

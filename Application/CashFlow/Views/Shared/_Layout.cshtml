@@ -15,14 +15,20 @@
                 <span class="navbar-inverse icon-bar"></span>
                 <span class="navbar-inverse icon-bar"></span>
             </button>
-            <div>@Html.ActionLink(" Cash Flow!", "Index", "Home", null, new { @class = "fa fa-cutlery navbar-brand" })</div>
+            <div>@Html.ActionLink(" Cash Flow!", "Index", "Home", null, new { @class = "fa fa-dollar navbar-brand" })</div>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav text-uppercase text-bold">
+                <li>
+                    @Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)
+                </li>
                 @if (Request.IsAuthenticated)
                 {
                     <li>
-                        @Html.ActionLink("Transactions", "Index", "Transaction", new { area = "" }, null)
+                        @Html.ActionLink("Add Transaction", "Create", "Transaction", new { area = "" }, null)
+                    </li>
+                    <li>
+                        @Html.ActionLink("Transaction List", "Index", "Transaction", new { area = "" }, null)
                     </li>
                     if (Html.ResourcePermission("Manager"))
                     {

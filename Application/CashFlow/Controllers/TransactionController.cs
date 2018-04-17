@@ -1,5 +1,6 @@
 ﻿using CashFlow.Base.Interfaces;
 using CashFlow.Base.Models;
+using CashFlow.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,6 +12,7 @@ using System.Web.Mvc;
 
 namespace CashFlow.Controllers
 {
+    [Authorize]
     public class TransactionController : BaseController<Transaction>
     {
         private IPaymentTypeRole _paymentTypeRole { get; set; }
@@ -26,7 +28,7 @@ namespace CashFlow.Controllers
             ViewBag.Disabled = ResourcePermission("Employee") ? "" : " disabled";
             ViewBag.AdmDisabled = ResourcePermission("Manager") ? "" : " disabled";
             ViewBag.PaymentTypes = new SelectList(
-                _paymentTypeRole.PaymentTypes().Select(p=> new { p.PaymentTypeId, p.Name })
+                _paymentTypeRole.PaymentTypes().Select(p => new { p.PaymentTypeId, p.Name })
                 , "PaymentTypeId", "Name"
             );
         }
@@ -36,20 +38,37 @@ namespace CashFlow.Controllers
         {
             LoadViewBag();
 
-            var transactions = Handler.All();
-            return View(transactions.OrderByDescending(r => r.TransactionDate).ToList());
+            var transactions = Handler
+                .All()
+                .Include("PaymentType")
+                .Include("Resource")
+                .OrderByDescending(r => r.TransactionDate)
+                .AsEnumerable()
+                .Select(t => new TransactionViewModel()
+                {
+                    Amount = (t.Amount.HasValue ? t.Amount.Value : 0).ToString("C2"),
+                    Description = t.Description,
+                    TransactionDateTime = t.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
+                    PaymentTypeName = t.PaymentType.Name,
+                    ResourceName = t.Resource.Name
+                }
+            );
+
+            return View(transactions.ToList());
         }
 
         // GET: Transaction/Create
         public ActionResult Create()
         {
-            LoadViewBag();
             if (!ResourcePermission("Employee")
-                || !ResourcePermission("Manager"))
+                && !ResourcePermission("Manager"))
             {
                 ModelState.AddModelError("", "You don`t have permission.");
-                return View();
+                return RedirectToAction("Index");
             }
+
+            LoadViewBag();
+            
             return View();
         }
 
@@ -60,13 +79,11 @@ namespace CashFlow.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "PaymentTypeId,Amount,Description")] Transaction transaction)
         {
-            LoadViewBag();
-
             if (!ResourcePermission("Employee")
-                || (!ResourcePermission("Manager")))
+                && (!ResourcePermission("Manager")))
             {
                 ModelState.AddModelError("", "You don`t have permission.");
-                return View(transaction);
+                return RedirectToAction("Index");
             }
 
             if (ModelState.IsValid)
@@ -79,56 +96,11 @@ namespace CashFlow.Controllers
                 return RedirectToAction("Index");
             }
 
+            LoadViewBag();
+
             return View(transaction);
         }
-
-        // GET: Transaction/Edit/5
-        //public ActionResult Edit(int? id)
-        //{
-        //    throw new NotImplementedException();
-
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Restaurante restaurante = db.Restaurantes.Find(id);
-        //    if (restaurante == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    LoadViewBag();
-        //    if (!UsuarioAdministrador())
-        //    {
-        //        ModelState.AddModelError("", "You don`t have permission.");
-        //        return View(restaurante);
-        //    }
-        //    return View(restaurante);
-        //}
-
-        //// POST: Transaction/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit([Bind(Include = "Id,IdCategoria,IdModalidade,DistanciaMedia,Endereco,Nome,ValorMedio,Ativo")] IDbTransaction transaction)
-        //{
-        //    throw new NotImplementedException();
-
-        //    LoadViewBag();
-        //    if (!UsuarioAdministrador())
-        //    {
-        //        ModelState.AddModelError("", "You don`t have permission.");
-        //        return View(restaurante);
-        //    }
-        //    if (ModelState.IsValid)
-        //    {
-        //        db.Entry(restaurante).State = EntityState.Modified;
-        //        db.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View(restaurante);
-        //}
-
+        
         // GET: Transaction/Delete/5
         public ActionResult Delete(Guid? id)
         {
@@ -136,17 +108,30 @@ namespace CashFlow.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            if (!ResourcePermission("Manager"))
+            {
+                ModelState.AddModelError("", "You don`t have permission.");
+                return RedirectToAction("Index");
+            }
+
             Transaction transaction = Handler.Find(id);
+
             if (transaction == null)
             {
                 return HttpNotFound();
             }
-            if (!ResourcePermission("Manager"))
+
+            var viewModel = new TransactionViewModel()
             {
-                ModelState.AddModelError("", "You don`t have permission.");
-                return View(transaction);
-            }
-            return View(transaction);
+                Amount = (transaction.Amount.HasValue ? transaction.Amount.Value : 0).ToString("C2"),
+                Description = transaction.Description,
+                TransactionDateTime = transaction.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
+                PaymentTypeName = transaction.PaymentType.Name,
+                ResourceName = transaction.Resource.Name
+            };
+
+            return View(viewModel);
         }
 
         // POST: Transaction/Delete/5

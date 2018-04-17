@@ -67,10 +67,13 @@ namespace CashFlow.App_Start
         {
             kernel.Bind<ITransactionHandler>().To<TransactionHandler>();
             kernel.Bind<IResourceHandler>().To<ResourceHandler>();
+            kernel.Bind<IRoleHandler>().To<RoleHandler>();
             kernel.Bind<IPaymentTypeHandler>().To<PaymentTypeHandler>();
 
             kernel.Bind<IPaymentTypeRole>().To<PaymentTypeRole>();
             kernel.Bind<ITransactionRole>().To<TransactionRole>();
+            kernel.Bind<IRoleRole>().To<RoleRole>();
         }        
     }
 }
+
