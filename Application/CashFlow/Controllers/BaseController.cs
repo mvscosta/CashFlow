@@ -41,7 +41,7 @@ namespace CashFlow.Controllers
                        this.HttpContext.User.Identity.IsAuthenticated;
             }
         }
-        public Resource CurrentUser
+        public virtual Resource CurrentUser
         {
             get
             {
