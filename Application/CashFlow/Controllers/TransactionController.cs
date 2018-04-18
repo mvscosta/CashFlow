@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -35,15 +36,46 @@ namespace CashFlow.Controllers
         }
 
         // GET: Transaction
-        public ActionResult Index()
+        public ActionResult Index(string dateFrom, string dateUntil, string search, string orderBy)
         {
             LoadViewBag();
 
             var transactions = Handler
                 .All()
                 .Include("PaymentType")
-                .Include("Resource")
-                .OrderByDescending(r => r.TransactionDate)
+                .Include("Resource");
+
+            if (!string.IsNullOrEmpty(dateFrom) || !string.IsNullOrEmpty(dateUntil))
+            {
+                DateTime from, until;
+
+                DateTime.TryParseExact(dateFrom, "MM/dd/yyyy", new CultureInfo("en"), DateTimeStyles.None, out from);
+                DateTime.TryParseExact(dateUntil, "MM/dd/yyyy", new CultureInfo("en"), DateTimeStyles.None, out until);
+
+                if (until != null)
+                    transactions = transactions.Where(t => DbFunctions.TruncateTime(t.TransactionDate) <= until);
+
+                if (from != null)
+                    transactions = transactions.Where(t => DbFunctions.TruncateTime(t.TransactionDate) >= from);
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                transactions = transactions.Where(t => t.PaymentType.Name.Contains(search) || t.Description.Contains(search));
+            }
+
+            IOrderedQueryable<Transaction> orderedTransactions;
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                orderedTransactions = transactions.OrderBy(orderBy);
+            }
+            else
+            {
+                orderedTransactions = transactions.OrderByDescending(r => r.TransactionDate);
+            }
+
+            var transactionsViewModel = orderedTransactions
                 .AsEnumerable()
                 .Select(t => new TransactionViewModel()
                 {
@@ -56,7 +88,7 @@ namespace CashFlow.Controllers
                 }
             );
 
-            return View(transactions.ToList());
+            return View(transactionsViewModel.ToList());
         }
 
         // GET: Transaction/Create

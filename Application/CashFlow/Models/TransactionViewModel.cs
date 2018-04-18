@@ -19,5 +19,6 @@ namespace CashFlow.Models
         public string PaymentTypeName { get; set; }
         [DisplayName("Resource")]
         public string ResourceName { get; set; }
+
     }
 }
