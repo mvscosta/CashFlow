@@ -20,8 +20,8 @@ namespace CashFlow.Handler
             if (includeRelatedEntities)
             {
                 return Context.Transaction
-                    .Include("Resource")
-                    .Include("PaymentType")
+                    .Include("Resource").DefaultIfEmpty()
+                    .Include("PaymentType").DefaultIfEmpty()
                     .Where(pt => pt.TransactionId.Equals(id.Value))
                     .FirstOrDefault();
             }

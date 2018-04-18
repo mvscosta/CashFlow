@@ -103,6 +103,7 @@ body {
 }
 
     .checkbox label {
+        display: inline;
         line-height: 30px;
     }
 

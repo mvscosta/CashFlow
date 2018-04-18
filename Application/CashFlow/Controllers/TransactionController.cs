@@ -1,6 +1,7 @@
 ﻿using CashFlow.Base.Interfaces;
 using CashFlow.Base.Models;
 using CashFlow.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -28,7 +29,7 @@ namespace CashFlow.Controllers
         {
             var isManager = ResourcePermission("Manager");
             ViewBag.Disabled = ResourcePermission("Employee") || isManager ? "" : " disabled";
-            ViewBag.AdmDisabled =  isManager ? "" : " disabled";
+            ViewBag.AdmDisabled = isManager ? "" : " disabled";
             ViewBag.PaymentTypes = new SelectList(
                 _paymentTypeRole.PaymentTypes().Select(p => new { p.PaymentTypeId, p.Name })
                 , "PaymentTypeId", "Name"
@@ -36,14 +37,14 @@ namespace CashFlow.Controllers
         }
 
         // GET: Transaction
-        public ActionResult Index(string dateFrom, string dateUntil, string search, string orderBy)
+        public ActionResult Index(string dateFrom, string dateUntil, string search, string orderBy, int? page)
         {
             LoadViewBag();
 
             var transactions = Handler
                 .All()
-                .Include("PaymentType")
-                .Include("Resource");
+                .Include("PaymentType").DefaultIfEmpty()
+                .Include("Resource").DefaultIfEmpty();
 
             if (!string.IsNullOrEmpty(dateFrom) || !string.IsNullOrEmpty(dateUntil))
             {
@@ -75,20 +76,25 @@ namespace CashFlow.Controllers
                 orderedTransactions = transactions.OrderByDescending(r => r.TransactionDate);
             }
 
-            var transactionsViewModel = orderedTransactions
-                .AsEnumerable()
+            var pageNumber = page ?? 1;
+
+            var cultureInfo = new CultureInfo("en");
+            var currencySymbol = cultureInfo.NumberFormat.CurrencySymbol;
+
+            var onePageTransactions = orderedTransactions
                 .Select(t => new TransactionViewModel()
                 {
-                    Amount = (t.Amount.HasValue ? t.Amount.Value : 0).ToString("C2"),
-                    Description = t.Description,
-                    TransactionDateTime = t.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
-                    PaymentTypeName = t.PaymentType.Name,
-                    ResourceName = t.Resource.Name,
-                    TransactionId = t.TransactionId
-                }
-            );
+                        Amount = currencySymbol + (t.Amount.HasValue ? t.Amount.Value : 0),
+                        Description = t.Description,
+                        TransactionDateTime = t.TransactionDate,
+                        PaymentTypeName = t.PaymentType.Name,
+                        ResourceName = t.Resource.Name,
+                        TransactionId = t.TransactionId
+                    }
+                )
+                .ToPagedList(pageNumber, 25);
 
-            return View(transactionsViewModel.ToList());
+            return View(onePageTransactions);
         }
 
         // GET: Transaction/Create
@@ -102,7 +108,7 @@ namespace CashFlow.Controllers
             }
 
             LoadViewBag();
-            
+
             return View();
         }
 
@@ -207,13 +213,16 @@ namespace CashFlow.Controllers
                 return HttpNotFound();
             }
 
+            var cultureInfo = new CultureInfo("en");
+            var currencySymbol = CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
+
             var viewModel = new TransactionViewModel()
             {
-                Amount = (transaction.Amount.HasValue ? transaction.Amount.Value : 0).ToString("C2"),
+                Amount = currencySymbol + (transaction.Amount.HasValue ? transaction.Amount.Value : 0),
                 Description = transaction.Description,
-                TransactionDateTime = transaction.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
-                PaymentTypeName = transaction.PaymentType.Name,
-                ResourceName = transaction.Resource.Name
+                TransactionDateTime = transaction.TransactionDate,
+                PaymentTypeName = transaction.PaymentType?.Name,
+                ResourceName = transaction.Resource?.Name
             };
 
             return View(viewModel);

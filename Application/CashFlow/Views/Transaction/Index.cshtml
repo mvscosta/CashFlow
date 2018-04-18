@@ -1,4 +1,6 @@
-﻿@model IEnumerable<CashFlow.Models.TransactionViewModel>
+﻿@model IPagedList<CashFlow.Models.TransactionViewModel>
+@using PagedList.Mvc;
+@using PagedList;
 
 @{
     ViewBag.Title = "Transactions";
@@ -69,7 +71,7 @@
                         @Html.DisplayFor(modelItem => item.PaymentTypeName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TransactionDateTime)
+                        @Html.DisplayFor(modelItem => item.TransactionDateTimeString)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ResourceName)
@@ -83,6 +85,7 @@
         </tbody>
     </table>
 </div>
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))
 
 @Scripts.Render("~/bundles/datepicker")
 

@@ -8,6 +8,7 @@ using CashFlow.Models;
 using CashFlow.Base.Interfaces;
 using CashFlow.Base.Models;
 using CashFlow.Role;
+using System.Globalization;
 
 namespace CashFlow.Controllers
 {
@@ -42,8 +43,8 @@ namespace CashFlow.Controllers
                 var datetimeToday = DateTime.Today;
 
                 viewModel.TransactionsToday = _transactionRole.TransactionsCountByDay(datetimeToday);
-                viewModel.ReceivedLast30Days = _transactionRole.TransactionsAmountLast30Days(datetimeToday)?.ToString("C2");
-                viewModel.ReceivedToday = _transactionRole.TransactionsAmountByDay(datetimeToday)?.ToString("C2");
+                viewModel.ReceivedLast30Days = _transactionRole.TransactionsAmountLast30Days(datetimeToday)?.ToString("C2", new CultureInfo("en"));
+                viewModel.ReceivedToday = _transactionRole.TransactionsAmountByDay(datetimeToday)?.ToString("C2", new CultureInfo("en"));
             }
 
             return View(viewModel);

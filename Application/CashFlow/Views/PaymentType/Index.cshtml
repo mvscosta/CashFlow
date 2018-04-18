@@ -39,7 +39,7 @@
         <td>
             @Html.ActionLink(" ", "Edit", new { id = item.PaymentTypeId }, new { @class = "btn btn-xs text-warning fa fa-pencil" + ViewBag.AdmDisabled }) |
             @Html.ActionLink(" ", "Details", new { id = item.PaymentTypeId }, new { @class = "btn btn-xs text-info fa fa-info" + ViewBag.AdmDisabled }) |
-            @Html.ActionLink(" ", "Delete", new { id = item.PaymentTypeId }, new { @class = "btn btn-xs text-danger fa fa-trash" + ViewBag.AdmDisabled })
+            @Html.ActionLink(" ", "Delete", new { id = item.PaymentTypeId }, new { @class = "btn btn-xs text-danger fa fa-trash disabled"  })
         </td>
     </tr>
 }
