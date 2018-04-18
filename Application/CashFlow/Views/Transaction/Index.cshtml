@@ -1,4 +1,6 @@
-﻿@model IEnumerable<CashFlow.Models.TransactionViewModel>
+﻿@model IPagedList<CashFlow.Models.TransactionViewModel>
+@using PagedList.Mvc;
+@using PagedList;
 
 @{
     ViewBag.Title = "Transactions";
@@ -10,24 +12,48 @@
 <p>
     @Html.ActionLink("Add", "Create", null, new { @class = "btn btn-primary" + ViewBag.disabled })
 </p>
+
+<div class="container-listitems" style="margin-top:-10px;">
+    @using (Html.BeginForm("index", "Transaction", FormMethod.Post, new { name = "frmFilters" }))
+    {
+        <div class="row commands" style="margin-top:15px;">
+            <div class="filters-page" style="text-align:right;">
+                <div class="form-inline">
+                    <div class="form-group">
+                        @Html.Label(string.Empty, "From", new { @class = "control-label", @for = "DateFrom", @style = "display: inline;" })
+                        @Html.TextBox("dateFrom", new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString("MM/dd/yyyy"), new { @class = "form-control", @style = "width: 120px; display: inline;", @placeholder = "Start Date" })
+                        @Html.Label(string.Empty, "Until", new { @class = "control-label", @for = "DateTo", @style = "display: inline;" })
+                        @Html.TextBox("dateUntil", DateTime.Now.ToString("MM/dd/yyyy"), new { @class = "form-control", @style = "width: 120px; display: inline;", @placeholder = "End Date" })
+                        @Html.Label(string.Empty, "Search", new { @class = "control-label", @for = "Search", @style = "display: inline;" })
+                        @Html.TextBox("search", "", new { @class = "form-control", @style = "width: 120px; display: inline;", @placeholder = "Search" })
+                        <span class="input-group-btn" style="display: inline;">
+                            <a href="javascript:frmFilters.submit();" class="btn btn-sm btn-primary" title="Filter date" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-search"></i></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
 <div class="table-responsive">
     <table class="table table-striped table-condensed table-hover">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Description)    
+                    @Html.ActionLink("Description", "Index", new { orderBy="Description" })
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Amount)    
+                    @Html.ActionLink("Amount", "Index", new { orderBy = "Amount" })  
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PaymentTypeName)
+                    @Html.ActionLink("Payment Type", "Index", new { orderBy = "PaymentType.Name" })
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.TransactionDateTime)
+                    @Html.ActionLink("Transaction Date", "Index", new { orderBy = "TransactionDate" })
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ResourceName)
+                   @Html.ActionLink("Resource", "Index", new { orderBy = "Resource.Name" })
                 </th>
             </tr>
         </thead>
@@ -45,7 +71,7 @@
                         @Html.DisplayFor(modelItem => item.PaymentTypeName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TransactionDateTime)
+                        @Html.DisplayFor(modelItem => item.TransactionDateTimeString)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ResourceName)
@@ -59,3 +85,24 @@
         </tbody>
     </table>
 </div>
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))
+
+@Scripts.Render("~/bundles/datepicker")
+
+<script>
+    $(document).ready(function (e) {
+        $('#dateFrom').datepicker({
+            format: "mm/dd/yyyy",
+            language: 'en',
+            autoclose: true
+        });
+
+        $('#dateUntil').datepicker({
+            format: "mm/dd/yyyy",
+            language: 'en',
+            autoclose: true
+        });
+
+        $('#dateFrom').on('changeDate', function (e) { $('#dateUntil').datepicker('setStartDate', $('#dateFrom')[0].value); });
+    });
+</script>

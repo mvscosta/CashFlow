@@ -1,10 +1,12 @@
 ﻿using CashFlow.Base.Interfaces;
 using CashFlow.Base.Models;
 using CashFlow.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -27,7 +29,7 @@ namespace CashFlow.Controllers
         {
             var isManager = ResourcePermission("Manager");
             ViewBag.Disabled = ResourcePermission("Employee") || isManager ? "" : " disabled";
-            ViewBag.AdmDisabled =  isManager ? "" : " disabled";
+            ViewBag.AdmDisabled = isManager ? "" : " disabled";
             ViewBag.PaymentTypes = new SelectList(
                 _paymentTypeRole.PaymentTypes().Select(p => new { p.PaymentTypeId, p.Name })
                 , "PaymentTypeId", "Name"
@@ -35,28 +37,64 @@ namespace CashFlow.Controllers
         }
 
         // GET: Transaction
-        public ActionResult Index()
+        public ActionResult Index(string dateFrom, string dateUntil, string search, string orderBy, int? page)
         {
             LoadViewBag();
 
             var transactions = Handler
                 .All()
-                .Include("PaymentType")
-                .Include("Resource")
-                .OrderByDescending(r => r.TransactionDate)
-                .AsEnumerable()
+                .Include("PaymentType").DefaultIfEmpty()
+                .Include("Resource").DefaultIfEmpty();
+
+            if (!string.IsNullOrEmpty(dateFrom) || !string.IsNullOrEmpty(dateUntil))
+            {
+                DateTime from, until;
+
+                DateTime.TryParseExact(dateFrom, "MM/dd/yyyy", new CultureInfo("en"), DateTimeStyles.None, out from);
+                DateTime.TryParseExact(dateUntil, "MM/dd/yyyy", new CultureInfo("en"), DateTimeStyles.None, out until);
+
+                if (until != null)
+                    transactions = transactions.Where(t => DbFunctions.TruncateTime(t.TransactionDate) <= until);
+
+                if (from != null)
+                    transactions = transactions.Where(t => DbFunctions.TruncateTime(t.TransactionDate) >= from);
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                transactions = transactions.Where(t => t.PaymentType.Name.Contains(search) || t.Description.Contains(search));
+            }
+
+            IOrderedQueryable<Transaction> orderedTransactions;
+
+            if (!string.IsNullOrEmpty(orderBy))
+            {
+                orderedTransactions = transactions.OrderBy(orderBy);
+            }
+            else
+            {
+                orderedTransactions = transactions.OrderByDescending(r => r.TransactionDate);
+            }
+
+            var pageNumber = page ?? 1;
+
+            var cultureInfo = new CultureInfo("en");
+            var currencySymbol = cultureInfo.NumberFormat.CurrencySymbol;
+
+            var onePageTransactions = orderedTransactions
                 .Select(t => new TransactionViewModel()
                 {
-                    Amount = (t.Amount.HasValue ? t.Amount.Value : 0).ToString("C2"),
-                    Description = t.Description,
-                    TransactionDateTime = t.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
-                    PaymentTypeName = t.PaymentType.Name,
-                    ResourceName = t.Resource.Name,
-                    TransactionId = t.TransactionId
-                }
-            );
+                        Amount = currencySymbol + (t.Amount.HasValue ? t.Amount.Value : 0),
+                        Description = t.Description,
+                        TransactionDateTime = t.TransactionDate,
+                        PaymentTypeName = t.PaymentType.Name,
+                        ResourceName = t.Resource.Name,
+                        TransactionId = t.TransactionId
+                    }
+                )
+                .ToPagedList(pageNumber, 25);
 
-            return View(transactions.ToList());
+            return View(onePageTransactions);
         }
 
         // GET: Transaction/Create
@@ -70,7 +108,7 @@ namespace CashFlow.Controllers
             }
 
             LoadViewBag();
-            
+
             return View();
         }
 
@@ -175,13 +213,16 @@ namespace CashFlow.Controllers
                 return HttpNotFound();
             }
 
+            var cultureInfo = new CultureInfo("en");
+            var currencySymbol = CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
+
             var viewModel = new TransactionViewModel()
             {
-                Amount = (transaction.Amount.HasValue ? transaction.Amount.Value : 0).ToString("C2"),
+                Amount = currencySymbol + (transaction.Amount.HasValue ? transaction.Amount.Value : 0),
                 Description = transaction.Description,
-                TransactionDateTime = transaction.TransactionDate.ToString("MM/dd/yyyy HH:mm:ss"),
-                PaymentTypeName = transaction.PaymentType.Name,
-                ResourceName = transaction.Resource.Name
+                TransactionDateTime = transaction.TransactionDate,
+                PaymentTypeName = transaction.PaymentType?.Name,
+                ResourceName = transaction.Resource?.Name
             };
 
             return View(viewModel);

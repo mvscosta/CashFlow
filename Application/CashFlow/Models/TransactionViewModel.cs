@@ -14,10 +14,15 @@ namespace CashFlow.Models
         public string Description { get; set; }
         public string Amount { get; set; }
         [DisplayName("Transaction Date")]
-        public string TransactionDateTime { get; set; }
+        public DateTime TransactionDateTime { get; set; }
         [DisplayName("Payment Type")]
         public string PaymentTypeName { get; set; }
         [DisplayName("Resource")]
         public string ResourceName { get; set; }
+
+        public string TransactionDateTimeString
+        {
+            get { return TransactionDateTime.ToString("MM/dd/yyyy HH:mm:ss"); }
+        }
     }
 }

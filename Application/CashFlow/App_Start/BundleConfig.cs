@@ -20,10 +20,15 @@ namespace CashFlow
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/datepicker").Include(
+                      "~/Scripts/moment-with-locales.min.js",
+                      "~/Scripts/bootstrap-datepicker.min.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.yeti.min.css",
                       "~/Content/bootstrap.css",
                       "~/Content/font-awesome.css",
+                      "~/Content/bootstrap-datepicker.min.css",
                       "~/Content/site.css"));
         }
     }

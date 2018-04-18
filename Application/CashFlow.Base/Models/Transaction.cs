@@ -20,6 +20,7 @@ namespace CashFlow.Base.Models
         public string Description { get; set; }
         [Required]
         public Nullable<decimal> Amount { get; set; }
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy hh:mm:ss}", ApplyFormatInEditMode = true)]
         [DisplayName("Transaction Date")]
         public DateTime TransactionDate { get; set; }
         [ForeignKey("PaymentType")]
